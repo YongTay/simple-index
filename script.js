@@ -17,6 +17,9 @@ function updateDateTime() {
 }
 
 let bookmarksRootNodes = [];
+let flatBookmarks = [];
+let searchSuggestions = [];
+let activeSuggestionIndex = -1;
 
 function renderCalendar() {
   const now = new Date();
@@ -106,6 +109,72 @@ function getBookmarkDomain(url) {
 
 function normalizeSearchText(value) {
   return (value || '').trim().toLowerCase();
+}
+
+function extractBookmarkPath(pathSegments) {
+  return pathSegments.filter(Boolean).join(' / ');
+}
+
+function flattenBookmarks(nodes, pathSegments = []) {
+  return nodes.reduce((result, node) => {
+    if (node.url) {
+      result.push({
+        id: node.id,
+        title: sanitizeBookmarkTitle(node.title, node.url),
+        url: node.url,
+        domain: getBookmarkDomain(node.url),
+        path: extractBookmarkPath(pathSegments)
+      });
+      return result;
+    }
+
+    const nextPath = node.title ? [...pathSegments, node.title] : pathSegments;
+    result.push(...flattenBookmarks(node.children || [], nextPath));
+    return result;
+  }, []);
+}
+
+function scoreBookmarkMatch(bookmark, query) {
+  const normalizedTitle = normalizeSearchText(bookmark.title);
+  const normalizedDomain = normalizeSearchText(bookmark.domain);
+  let score = 0;
+
+  if (normalizedTitle === query) {
+    score += 120;
+  } else if (normalizedTitle.startsWith(query)) {
+    score += 90;
+  } else if (normalizedTitle.includes(query)) {
+    score += 55;
+  }
+
+  if (normalizedDomain === query) {
+    score += 110;
+  } else if (normalizedDomain.startsWith(query)) {
+    score += 80;
+  } else if (normalizedDomain.includes(query)) {
+    score += 50;
+  }
+
+  if (bookmark.path && normalizeSearchText(bookmark.path).includes(query)) {
+    score += 12;
+  }
+
+  return score;
+}
+
+function getBookmarkSuggestions(query) {
+  if (!query) {
+    return [];
+  }
+
+  return flatBookmarks
+    .map((bookmark) => ({
+      ...bookmark,
+      score: scoreBookmarkMatch(bookmark, query)
+    }))
+    .filter((bookmark) => bookmark.score > 0)
+    .sort((left, right) => right.score - left.score || left.title.localeCompare(right.title, 'zh-CN'))
+    .slice(0, 8);
 }
 
 function filterBookmarkTree(nodes, query) {
@@ -250,12 +319,70 @@ function renderBookmarksTree(nodes) {
   container.appendChild(fragment);
 }
 
-function updateBookmarksSearch() {
-  const searchInput = document.getElementById('bookmarksSearchInput');
-  const query = normalizeSearchText(searchInput ? searchInput.value : '');
-  const filteredNodes = markFoldersOpen(filterBookmarkTree(bookmarksRootNodes, query), Boolean(query));
+function renderSearchSuggestions() {
+  const container = document.getElementById('searchSuggestions');
+  const query = normalizeSearchText(document.getElementById('searchInput')?.value);
+  if (!container) {
+    return;
+  }
 
-  renderBookmarksTree(filteredNodes);
+  container.innerHTML = '';
+
+  if (!query) {
+    container.hidden = true;
+    activeSuggestionIndex = -1;
+    return;
+  }
+
+  searchSuggestions = getBookmarkSuggestions(query);
+  if (activeSuggestionIndex >= searchSuggestions.length) {
+    activeSuggestionIndex = -1;
+  }
+
+  if (!searchSuggestions.length) {
+    const emptyState = document.createElement('div');
+    emptyState.className = 'search-suggestion-empty';
+    emptyState.textContent = '未找到匹配书签，按 Enter 将直接搜索';
+    container.appendChild(emptyState);
+    container.hidden = false;
+    return;
+  }
+
+  searchSuggestions.forEach((suggestion, index) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = `search-suggestion${index === activeSuggestionIndex ? ' is-active' : ''}`;
+    button.dataset.index = String(index);
+
+    const icon = document.createElement('span');
+    icon.className = 'search-suggestion-icon';
+    icon.textContent = '↗';
+
+    const content = document.createElement('span');
+    content.className = 'search-suggestion-content';
+
+    const title = document.createElement('span');
+    title.className = 'search-suggestion-title';
+    title.textContent = suggestion.title;
+
+    const meta = document.createElement('span');
+    meta.className = 'search-suggestion-meta';
+    meta.textContent = suggestion.path ? `${suggestion.domain} · ${suggestion.path}` : suggestion.domain;
+
+    content.appendChild(title);
+    content.appendChild(meta);
+    button.appendChild(icon);
+    button.appendChild(content);
+
+    button.addEventListener('mousedown', (event) => {
+      event.preventDefault();
+      openSuggestion(index);
+    });
+
+    container.appendChild(button);
+  });
+
+  container.hidden = false;
 }
 
 function loadBookmarks() {
@@ -276,17 +403,84 @@ function loadBookmarks() {
     }
 
     bookmarksRootNodes = tree && tree[0] && tree[0].children ? tree[0].children : [];
-    updateBookmarksSearch();
+    flatBookmarks = flattenBookmarks(bookmarksRootNodes);
+    renderBookmarksTree(bookmarksRootNodes);
+    renderSearchSuggestions();
   });
 }
 
-function handleSearch(event) {
-  if (event.key === 'Enter') {
-    const query = event.target.value.trim();
-    if (query) {
-      const searchUrl = `https://www.bing.com/search?q=${encodeURIComponent(query)}`;
-      window.location.href = searchUrl;
+function openSuggestion(index) {
+  const suggestion = searchSuggestions[index];
+  if (!suggestion) {
+    return;
+  }
+
+  window.location.href = suggestion.url;
+}
+
+function performDefaultSearch(query) {
+  if (!query) {
+    return;
+  }
+
+  const searchUrl = `https://www.bing.com/search?q=${encodeURIComponent(query)}`;
+  window.location.href = searchUrl;
+}
+
+function updateActiveSuggestion(nextIndex) {
+  if (!searchSuggestions.length) {
+    activeSuggestionIndex = -1;
+    return;
+  }
+
+  const total = searchSuggestions.length;
+  if (activeSuggestionIndex === -1) {
+    activeSuggestionIndex = nextIndex >= 0 ? 0 : total - 1;
+  } else {
+    activeSuggestionIndex = (nextIndex + total) % total;
+  }
+  renderSearchSuggestions();
+}
+
+function handleSearchInput(event) {
+  searchSuggestions = [];
+  activeSuggestionIndex = -1;
+  renderSearchSuggestions();
+  renderBookmarksTree(markFoldersOpen(filterBookmarkTree(bookmarksRootNodes, normalizeSearchText(event.target.value)), Boolean(event.target.value.trim())));
+}
+
+function handleSearchKeydown(event) {
+  const query = event.target.value.trim();
+
+  if (event.key === 'ArrowDown' && searchSuggestions.length) {
+    event.preventDefault();
+    updateActiveSuggestion(activeSuggestionIndex + 1);
+    return;
+  }
+
+  if (event.key === 'ArrowUp' && searchSuggestions.length) {
+    event.preventDefault();
+    updateActiveSuggestion(activeSuggestionIndex - 1);
+    return;
+  }
+
+  if (event.key === 'Escape') {
+    const container = document.getElementById('searchSuggestions');
+    if (container) {
+      container.hidden = true;
     }
+    activeSuggestionIndex = -1;
+    return;
+  }
+
+  if (event.key === 'Enter') {
+    event.preventDefault();
+    if (activeSuggestionIndex >= 0 && searchSuggestions[activeSuggestionIndex]) {
+      openSuggestion(activeSuggestionIndex);
+      return;
+    }
+
+    performDefaultSearch(query);
   }
 }
 
@@ -320,12 +514,9 @@ document.addEventListener('DOMContentLoaded', () => {
   setInterval(updateDateTime, 1000);
   
   const searchInput = document.getElementById('searchInput');
-  const bookmarksSearchInput = document.getElementById('bookmarksSearchInput');
-  searchInput.addEventListener('keypress', handleSearch);
+  searchInput.addEventListener('input', handleSearchInput);
+  searchInput.addEventListener('keydown', handleSearchKeydown);
   searchInput.addEventListener('blur', handleSearchBlur);
-  if (bookmarksSearchInput) {
-    bookmarksSearchInput.addEventListener('input', updateBookmarksSearch);
-  }
 
   focusSearchInput();
   window.addEventListener('focus', focusSearchInput);
