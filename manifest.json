@@ -1,0 +1,9 @@
+{
+  "manifest_version": 3,
+  "name": "极简首页",
+  "version": "1.0",
+  "description": "一个极简美观的浏览器首页",
+  "chrome_url_overrides": {
+    "newtab": "newtab.html"
+  }
+}
