@@ -93,6 +93,186 @@ body::before {
   pointer-events: none;
 }
 
+.bookmarks-panel {
+  position: fixed;
+  top: 8vh;
+  right: 2rem;
+  z-index: 2;
+  width: min(360px, calc(100vw - 2rem));
+  max-height: 84vh;
+  padding: 1rem 1rem 1.1rem;
+  border-radius: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.22));
+  backdrop-filter: blur(14px);
+  overflow: hidden;
+  pointer-events: auto;
+}
+
+.bookmarks-header {
+  margin-bottom: 0.9rem;
+}
+
+.bookmarks-search {
+  position: relative;
+  margin-bottom: 0.9rem;
+}
+
+.bookmarks-search-icon {
+  position: absolute;
+  top: 50%;
+  left: 0.95rem;
+  transform: translateY(-50%);
+  font-size: 1rem;
+  color: rgba(112, 131, 160, 0.82);
+  pointer-events: none;
+}
+
+.bookmarks-search-input {
+  width: 100%;
+  padding: 0.78rem 0.95rem 0.78rem 2.55rem;
+  border: 1px solid rgba(255, 255, 255, 0.78);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--text-main);
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.22s ease, background 0.22s ease, box-shadow 0.22s ease;
+}
+
+.bookmarks-search-input::placeholder {
+  color: #93a5bf;
+}
+
+.bookmarks-search-input:focus {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(255, 154, 174, 0.78);
+  box-shadow: 0 0 0 4px rgba(255, 164, 185, 0.1);
+}
+
+.bookmarks-label {
+  margin-bottom: 0.22rem;
+  font-size: 0.76rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(112, 131, 160, 0.85);
+}
+
+.bookmarks-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.bookmarks-tree {
+  max-height: calc(84vh - 4.8rem);
+  overflow: auto;
+  padding-right: 0.25rem;
+}
+
+.bookmarks-tree::-webkit-scrollbar {
+  width: 8px;
+}
+
+.bookmarks-tree::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(159, 176, 199, 0.42);
+}
+
+.bookmarks-empty {
+  font-size: 0.95rem;
+  color: var(--text-soft);
+}
+
+.bookmark-folder {
+  margin-top: 0.18rem;
+}
+
+.bookmark-folder summary,
+.bookmark-link {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-height: 2.35rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 16px;
+  color: var(--text-main);
+}
+
+.bookmark-folder summary {
+  cursor: pointer;
+  list-style: none;
+  transition: background 0.22s ease, color 0.22s ease;
+}
+
+.bookmark-folder summary::-webkit-details-marker {
+  display: none;
+}
+
+.bookmark-folder summary:hover,
+.bookmark-link:hover {
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.bookmark-folder-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bookmark-folder-arrow {
+  font-size: 0.75rem;
+  color: rgba(112, 131, 160, 0.85);
+  transition: transform 0.22s ease;
+}
+
+.bookmark-folder[open] > summary .bookmark-folder-arrow {
+  transform: rotate(90deg);
+}
+
+.bookmark-children {
+  margin-left: 0.7rem;
+  padding-left: 0.7rem;
+  border-left: 1px solid rgba(255, 255, 255, 0.42);
+}
+
+.bookmark-link {
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.22s ease, color 0.22s ease;
+}
+
+.bookmark-icon {
+  flex-shrink: 0;
+  width: 1.15rem;
+  text-align: center;
+  color: rgba(255, 107, 138, 0.72);
+}
+
+.bookmark-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bookmark-text-group {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.bookmark-meta {
+  display: block;
+  margin-top: 0.1rem;
+  font-size: 0.76rem;
+  color: rgba(112, 131, 160, 0.88);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .hero-card::before {
   content: "";
   position: absolute;
@@ -317,6 +497,12 @@ body::before {
   }
 }
 
+@media (min-width: 1100px) {
+  body {
+    padding-right: 25rem;
+  }
+}
+
 @media (max-width: 768px) {
   body {
     padding: 8vh 1.25rem 1.25rem;
@@ -373,5 +559,17 @@ body::before {
 
   .hero-badge {
     font-size: 0.76rem;
+  }
+
+  .bookmarks-panel {
+    position: static;
+    width: min(100%, 760px);
+    max-height: 40vh;
+    margin-top: 0.5rem;
+    border-radius: 24px;
+  }
+
+  .bookmarks-tree {
+    max-height: calc(40vh - 4.8rem);
   }
 }

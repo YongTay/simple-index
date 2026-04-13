@@ -16,6 +16,8 @@ function updateDateTime() {
   dateElement.textContent = now.toLocaleDateString('zh-CN', options);
 }
 
+let bookmarksRootNodes = [];
+
 function renderCalendar() {
   const now = new Date();
   const year = now.getFullYear();
@@ -82,6 +84,202 @@ function renderCalendar() {
   }
 }
 
+function sanitizeBookmarkTitle(title, fallback) {
+  if (title && title.trim()) {
+    return title.trim();
+  }
+
+  return fallback;
+}
+
+function getBookmarkDomain(url) {
+  if (!url) {
+    return '';
+  }
+
+  try {
+    return new URL(url).hostname.replace(/^www\./, '');
+  } catch {
+    return '';
+  }
+}
+
+function normalizeSearchText(value) {
+  return (value || '').trim().toLowerCase();
+}
+
+function filterBookmarkTree(nodes, query) {
+  if (!query) {
+    return nodes;
+  }
+
+  return nodes.reduce((result, node) => {
+    if (node.url) {
+      const title = normalizeSearchText(node.title);
+      const domain = normalizeSearchText(getBookmarkDomain(node.url));
+      if (title.includes(query) || domain.includes(query)) {
+        result.push(node);
+      }
+      return result;
+    }
+
+    const matchedChildren = filterBookmarkTree(node.children || [], query);
+    const folderTitle = normalizeSearchText(node.title);
+    if (matchedChildren.length || folderTitle.includes(query)) {
+      result.push({
+        ...node,
+        children: folderTitle.includes(query) ? (node.children || []) : matchedChildren
+      });
+    }
+
+    return result;
+  }, []);
+}
+
+function markFoldersOpen(nodes, shouldOpen) {
+  return nodes.map((node) => {
+    if (!node.children) {
+      return node;
+    }
+
+    return {
+      ...node,
+      forceOpen: shouldOpen,
+      children: markFoldersOpen(node.children, shouldOpen)
+    };
+  });
+}
+
+function createBookmarkNode(node) {
+  if (!node) {
+    return null;
+  }
+
+  if (node.url) {
+    const link = document.createElement('a');
+    link.className = 'bookmark-link';
+    link.href = node.url;
+    link.textContent = '';
+    link.title = node.title || node.url;
+
+    const icon = document.createElement('span');
+    icon.className = 'bookmark-icon';
+    icon.textContent = '•';
+
+    const text = document.createElement('span');
+    text.className = 'bookmark-text';
+    text.textContent = sanitizeBookmarkTitle(node.title, node.url);
+
+    const textWrapper = document.createElement('span');
+    textWrapper.className = 'bookmark-text-group';
+
+    const title = document.createElement('span');
+    title.textContent = sanitizeBookmarkTitle(node.title, node.url);
+
+    const meta = document.createElement('span');
+    meta.className = 'bookmark-meta';
+    meta.textContent = getBookmarkDomain(node.url) || node.url;
+
+    textWrapper.appendChild(title);
+    textWrapper.appendChild(meta);
+    link.appendChild(icon);
+    link.appendChild(textWrapper);
+    return link;
+  }
+
+  const children = (node.children || [])
+    .map(createBookmarkNode)
+    .filter(Boolean);
+
+  if (children.length === 0) {
+    return null;
+  }
+
+  const details = document.createElement('details');
+  details.className = 'bookmark-folder';
+  details.open = node.id === '1' || node.id === '2' || node.forceOpen;
+
+  const summary = document.createElement('summary');
+
+  const icon = document.createElement('span');
+  icon.className = 'bookmark-icon';
+  icon.textContent = '⌄';
+
+  const name = document.createElement('span');
+  name.className = 'bookmark-folder-name';
+  name.textContent = sanitizeBookmarkTitle(node.title, '未命名文件夹');
+
+  const arrow = document.createElement('span');
+  arrow.className = 'bookmark-folder-arrow';
+  arrow.textContent = '›';
+
+  summary.appendChild(icon);
+  summary.appendChild(name);
+  summary.appendChild(arrow);
+  details.appendChild(summary);
+
+  const childContainer = document.createElement('div');
+  childContainer.className = 'bookmark-children';
+  children.forEach((child) => childContainer.appendChild(child));
+  details.appendChild(childContainer);
+
+  return details;
+}
+
+function renderBookmarksTree(nodes) {
+  const container = document.getElementById('bookmarksTree');
+  if (!container) {
+    return;
+  }
+
+  container.innerHTML = '';
+
+  const fragment = document.createDocumentFragment();
+  nodes.map(createBookmarkNode).filter(Boolean).forEach((node) => {
+    fragment.appendChild(node);
+  });
+
+  if (!fragment.childNodes.length) {
+    const emptyState = document.createElement('p');
+    emptyState.className = 'bookmarks-empty';
+    emptyState.textContent = '暂无可显示的书签';
+    container.appendChild(emptyState);
+    return;
+  }
+
+  container.appendChild(fragment);
+}
+
+function updateBookmarksSearch() {
+  const searchInput = document.getElementById('bookmarksSearchInput');
+  const query = normalizeSearchText(searchInput ? searchInput.value : '');
+  const filteredNodes = markFoldersOpen(filterBookmarkTree(bookmarksRootNodes, query), Boolean(query));
+
+  renderBookmarksTree(filteredNodes);
+}
+
+function loadBookmarks() {
+  const container = document.getElementById('bookmarksTree');
+  if (!container) {
+    return;
+  }
+
+  if (!chrome.bookmarks || !chrome.bookmarks.getTree) {
+    container.innerHTML = '<p class="bookmarks-empty">当前环境不支持书签读取</p>';
+    return;
+  }
+
+  chrome.bookmarks.getTree((tree) => {
+    if (chrome.runtime.lastError) {
+      container.innerHTML = '<p class="bookmarks-empty">书签读取失败</p>';
+      return;
+    }
+
+    bookmarksRootNodes = tree && tree[0] && tree[0].children ? tree[0].children : [];
+    updateBookmarksSearch();
+  });
+}
+
 function handleSearch(event) {
   if (event.key === 'Enter') {
     const query = event.target.value.trim();
@@ -118,11 +316,16 @@ function handleSearchBlur(event) {
 document.addEventListener('DOMContentLoaded', () => {
   updateDateTime();
   renderCalendar();
+  loadBookmarks();
   setInterval(updateDateTime, 1000);
   
   const searchInput = document.getElementById('searchInput');
+  const bookmarksSearchInput = document.getElementById('bookmarksSearchInput');
   searchInput.addEventListener('keypress', handleSearch);
   searchInput.addEventListener('blur', handleSearchBlur);
+  if (bookmarksSearchInput) {
+    bookmarksSearchInput.addEventListener('input', updateBookmarksSearch);
+  }
 
   focusSearchInput();
   window.addEventListener('focus', focusSearchInput);

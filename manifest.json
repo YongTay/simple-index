@@ -3,6 +3,9 @@
   "name": "极简首页",
   "version": "1.0",
   "description": "一个极简美观的浏览器首页",
+  "permissions": [
+    "bookmarks"
+  ],
   "chrome_url_overrides": {
     "newtab": "newtab.html"
   }
