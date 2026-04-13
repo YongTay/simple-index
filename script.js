@@ -26,12 +26,25 @@ function handleSearch(event) {
   }
 }
 
+function focusSearchInput() {
+  const searchInput = document.getElementById('searchInput');
+  if (!searchInput) {
+    return;
+  }
+
+  requestAnimationFrame(() => {
+    searchInput.focus();
+    searchInput.select();
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   updateDateTime();
   setInterval(updateDateTime, 1000);
   
   const searchInput = document.getElementById('searchInput');
   searchInput.addEventListener('keypress', handleSearch);
-  
-  searchInput.focus();
+
+  focusSearchInput();
+  window.addEventListener('focus', focusSearchInput);
 });
