@@ -31,6 +31,7 @@ body {
   overflow: hidden;
   position: relative;
   padding: 10vh 2rem 2rem;
+  user-select: none;
 }
 
 body::before {
@@ -89,6 +90,7 @@ body::before {
   transform: translateY(-1.5rem);
   transition: border-color 0.35s ease, transform 0.35s ease;
   animation: cardFadeIn 0.7s ease;
+  pointer-events: none;
 }
 
 .hero-card::before {
@@ -149,6 +151,7 @@ body::before {
   width: 100%;
   max-width: 620px;
   margin: 0 auto;
+  pointer-events: auto;
 }
 
 .search-icon {
@@ -191,6 +194,102 @@ body::before {
   margin-top: 1rem;
   font-size: 0.96rem;
   color: var(--text-soft);
+}
+
+.calendar-panel {
+  width: min(100%, 620px);
+  margin: 1.75rem auto 0;
+  padding: 1.2rem 1.1rem 1rem;
+  border-radius: 26px;
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.08));
+  backdrop-filter: blur(8px);
+  text-align: left;
+}
+
+.calendar-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.calendar-label {
+  font-size: 0.76rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(112, 131, 160, 0.85);
+  margin-bottom: 0.3rem;
+}
+
+.calendar-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.calendar-today {
+  flex-shrink: 0;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  color: var(--accent-strong);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.calendar-weekdays,
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.calendar-weekdays {
+  margin-bottom: 0.45rem;
+}
+
+.calendar-weekday,
+.calendar-day {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.calendar-weekday {
+  height: 2rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: rgba(112, 131, 160, 0.9);
+}
+
+.calendar-day {
+  position: relative;
+  height: 2.65rem;
+  border-radius: 16px;
+  font-size: 0.98rem;
+  color: var(--text-main);
+}
+
+.calendar-day.is-muted {
+  color: rgba(112, 131, 160, 0.42);
+}
+
+.calendar-day.is-today {
+  background: linear-gradient(135deg, rgba(255, 191, 105, 0.34), rgba(255, 138, 138, 0.3));
+  color: #c95072;
+  font-weight: 700;
+}
+
+.calendar-day.is-today::after {
+  content: "";
+  position: absolute;
+  bottom: 0.38rem;
+  width: 0.28rem;
+  height: 0.28rem;
+  border-radius: 999px;
+  background: currentColor;
 }
 
 .corner-glow {
@@ -245,6 +344,27 @@ body::before {
   .search-input {
     padding: 0.95rem 1.2rem 0.95rem 3rem;
     font-size: 1rem;
+  }
+
+  .calendar-panel {
+    margin-top: 1.4rem;
+    padding: 1rem 0.85rem 0.9rem;
+    border-radius: 22px;
+  }
+
+  .calendar-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .calendar-title {
+    font-size: 1.08rem;
+  }
+
+  .calendar-day {
+    height: 2.35rem;
+    font-size: 0.92rem;
   }
 
   .search-icon {
