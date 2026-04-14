@@ -4,7 +4,8 @@
   "version": "1.0",
   "description": "一个极简美观的浏览器首页",
   "permissions": [
-    "bookmarks"
+    "bookmarks",
+    "storage"
   ],
   "chrome_url_overrides": {
     "newtab": "newtab.html"

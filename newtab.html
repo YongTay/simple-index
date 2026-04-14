@@ -22,6 +22,11 @@
       <div class="search-suggestions" id="searchSuggestions" hidden></div>
     </div>
 
+    <div class="quote-panel" id="quotePanel">
+      <p class="quote-text" id="quoteText"></p>
+      <p class="quote-author" id="quoteAuthor"></p>
+    </div>
+
     <p class="search-tip">按 Enter 即刻开始探索</p>
 
     <section class="calendar-panel" aria-label="日历">
@@ -48,6 +53,54 @@
   </aside>
 
   <div class="corner-glow"></div>
+
+  <button class="settings-toggle" id="settingsToggle" aria-label="设置" title="设置">⚙</button>
+
+  <dialog class="settings-dialog" id="settingsDialog">
+    <div class="settings-header">
+      <h3 class="settings-title">设置</h3>
+      <button class="settings-close" id="settingsClose" aria-label="关闭">✕</button>
+    </div>
+    <div class="settings-body">
+      <div class="settings-section">
+        <h4 class="settings-section-title">壁纸主题</h4>
+        <div class="theme-grid" id="themeGrid">
+          <button class="theme-option is-active" data-theme="warm">
+            <span class="theme-preview theme-warm"></span>
+            <span class="theme-label">暖色渐变</span>
+          </button>
+          <button class="theme-option" data-theme="ocean">
+            <span class="theme-preview theme-ocean"></span>
+            <span class="theme-label">深海蓝调</span>
+          </button>
+          <button class="theme-option" data-theme="forest">
+            <span class="theme-preview theme-forest"></span>
+            <span class="theme-label">清晨绿意</span>
+          </button>
+          <button class="theme-option" data-theme="sunset">
+            <span class="theme-preview theme-sunset"></span>
+            <span class="theme-label">暮光晚霞</span>
+          </button>
+          <button class="theme-option" data-theme="lavender">
+            <span class="theme-preview theme-lavender"></span>
+            <span class="theme-label">薰衣草梦</span>
+          </button>
+          <button class="theme-option" data-theme="auto">
+            <span class="theme-preview theme-auto"></span>
+            <span class="theme-label">自动轮换</span>
+          </button>
+        </div>
+      </div>
+      <div class="settings-section">
+        <h4 class="settings-section-title">每日一句</h4>
+        <label class="settings-switch">
+          <input type="checkbox" id="quoteToggle" checked>
+          <span class="switch-track"></span>
+          <span class="switch-label">显示每日名言</span>
+        </label>
+      </div>
+    </div>
+  </dialog>
 
   <script src="script.js"></script>
 </body>
