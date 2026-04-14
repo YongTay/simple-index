@@ -574,7 +574,7 @@ body::before {
 }
 
 @media (min-width: 1100px) {
-  body {
+  body.has-bookmarks {
     padding-right: 25rem;
   }
 }

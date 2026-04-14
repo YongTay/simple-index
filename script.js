@@ -80,7 +80,7 @@ function resolveTheme() {
 }
 
 async function loadSettings() {
-  const defaults = { theme: "warm", showQuotes: true };
+  const defaults = { theme: "warm", showQuotes: true, showBookmarks: true };
 
   // Try chrome.storage.local first
   try {
@@ -90,6 +90,7 @@ async function loadSettings() {
         userSettings = result;
         applyTheme(resolveTheme());
         renderQuote();
+        applyBookmarksVisibility();
         updateSettingsUI();
         return;
       }
@@ -107,6 +108,7 @@ async function loadSettings() {
         userSettings = { ...defaults, ...parsed };
         applyTheme(resolveTheme());
         renderQuote();
+        applyBookmarksVisibility();
         updateSettingsUI();
         return;
       }
@@ -119,6 +121,7 @@ async function loadSettings() {
   userSettings = { ...defaults };
   applyTheme(resolveTheme());
   renderQuote();
+  applyBookmarksVisibility();
   updateSettingsUI();
 }
 
@@ -144,6 +147,7 @@ async function saveSettings() {
 function updateSettingsUI() {
   const themeGrid = document.getElementById('themeGrid');
   const quoteToggle = document.getElementById('quoteToggle');
+  const bookmarksToggle = document.getElementById('bookmarksToggle');
 
   if (themeGrid) {
     themeGrid.querySelectorAll('.theme-option').forEach((btn) => {
@@ -154,6 +158,18 @@ function updateSettingsUI() {
   if (quoteToggle) {
     quoteToggle.checked = userSettings.showQuotes;
   }
+
+  if (bookmarksToggle) {
+    bookmarksToggle.checked = userSettings.showBookmarks;
+  }
+}
+
+function applyBookmarksVisibility() {
+  const bookmarksPanel = document.querySelector('.bookmarks-panel');
+  if (bookmarksPanel) {
+    bookmarksPanel.hidden = !userSettings.showBookmarks;
+  }
+  document.body.classList.toggle('has-bookmarks', userSettings.showBookmarks);
 }
 
 let bookmarksRootNodes = [];
@@ -251,7 +267,8 @@ const themeOrder = ["warm", "ocean", "forest", "sunset", "lavender"];
 
 let userSettings = {
   theme: "warm",
-  showQuotes: true
+  showQuotes: true,
+  showBookmarks: true
 };
 
 function renderCalendar() {
@@ -762,6 +779,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const settingsClose = document.getElementById('settingsClose');
   const themeGrid = document.getElementById('themeGrid');
   const quoteToggle = document.getElementById('quoteToggle');
+  const bookmarksToggle = document.getElementById('bookmarksToggle');
 
   if (settingsToggle && settingsDialog) {
     settingsToggle.addEventListener('click', () => {
@@ -800,6 +818,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     quoteToggle.addEventListener('change', () => {
       userSettings.showQuotes = quoteToggle.checked;
       renderQuote();
+      saveSettings();
+    });
+  }
+
+  if (bookmarksToggle) {
+    bookmarksToggle.addEventListener('change', () => {
+      userSettings.showBookmarks = bookmarksToggle.checked;
+      applyBookmarksVisibility();
       saveSettings();
     });
   }
