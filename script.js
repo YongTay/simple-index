@@ -80,7 +80,7 @@ function resolveTheme() {
 }
 
 async function loadSettings() {
-  const defaults = { theme: "warm", showQuotes: true, showBookmarks: true };
+  const defaults = { theme: "warm", showQuotes: true, showBookmarks: true, showLasers: true };
 
   // Try chrome.storage.local first
   try {
@@ -91,6 +91,7 @@ async function loadSettings() {
         applyTheme(resolveTheme());
         renderQuote();
         applyBookmarksVisibility();
+        applyLasersVisibility();
         updateSettingsUI();
         return;
       }
@@ -109,6 +110,7 @@ async function loadSettings() {
         applyTheme(resolveTheme());
         renderQuote();
         applyBookmarksVisibility();
+        applyLasersVisibility();
         updateSettingsUI();
         return;
       }
@@ -122,6 +124,7 @@ async function loadSettings() {
   applyTheme(resolveTheme());
   renderQuote();
   applyBookmarksVisibility();
+  applyLasersVisibility();
   updateSettingsUI();
 }
 
@@ -148,6 +151,7 @@ function updateSettingsUI() {
   const themeGrid = document.getElementById('themeGrid');
   const quoteToggle = document.getElementById('quoteToggle');
   const bookmarksToggle = document.getElementById('bookmarksToggle');
+  const lasersToggle = document.getElementById('lasersToggle');
 
   if (themeGrid) {
     themeGrid.querySelectorAll('.theme-option').forEach((btn) => {
@@ -162,6 +166,10 @@ function updateSettingsUI() {
   if (bookmarksToggle) {
     bookmarksToggle.checked = userSettings.showBookmarks;
   }
+
+  if (lasersToggle) {
+    lasersToggle.checked = userSettings.showLasers;
+  }
 }
 
 function applyBookmarksVisibility() {
@@ -170,6 +178,13 @@ function applyBookmarksVisibility() {
     bookmarksPanel.hidden = !userSettings.showBookmarks;
   }
   document.body.classList.toggle('has-bookmarks', userSettings.showBookmarks);
+}
+
+function applyLasersVisibility() {
+  const lasersPanel = document.querySelector('.bg-lasers');
+  if (lasersPanel) {
+    lasersPanel.hidden = !userSettings.showLasers;
+  }
 }
 
 let bookmarksRootNodes = [];
@@ -328,7 +343,8 @@ const themeOrder = ["warm", "ocean", "forest", "sunset", "lavender", "mint", "ro
 let userSettings = {
   theme: "warm",
   showQuotes: true,
-  showBookmarks: true
+  showBookmarks: true,
+  showLasers: true
 };
 
 function renderCalendar() {
@@ -840,6 +856,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const themeGrid = document.getElementById('themeGrid');
   const quoteToggle = document.getElementById('quoteToggle');
   const bookmarksToggle = document.getElementById('bookmarksToggle');
+  const lasersToggle = document.getElementById('lasersToggle');
 
   if (settingsToggle && settingsDialog) {
     settingsToggle.addEventListener('click', () => {
@@ -886,6 +903,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     bookmarksToggle.addEventListener('change', () => {
       userSettings.showBookmarks = bookmarksToggle.checked;
       applyBookmarksVisibility();
+      saveSettings();
+    });
+  }
+
+  if (lasersToggle) {
+    lasersToggle.addEventListener('change', () => {
+      userSettings.showLasers = lasersToggle.checked;
+      applyLasersVisibility();
       saveSettings();
     });
   }

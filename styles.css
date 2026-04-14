@@ -77,6 +77,213 @@ body::before {
   pointer-events: none;
 }
 
+.bg-lasers {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.laser {
+  position: absolute;
+  height: 1px;
+  opacity: 0;
+  animation: laserSlide var(--duration, 10s) var(--delay, 0s) infinite linear;
+}
+
+.laser::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  filter: blur(1.5px);
+}
+
+.laser::after {
+  content: "";
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  filter: blur(2px);
+  box-shadow: 0 0 10px 3px var(--accent);
+  animation: laserDot var(--duration, 10s) var(--delay, 0s) infinite linear;
+}
+
+/* 方向1: 左到右 */
+.laser-1 {
+  --accent: rgba(255, 107, 138, 0.5);
+  top: 8%;
+  width: 40%;
+  --duration: 12s;
+  --delay: 0s;
+  --angle: -4deg;
+}
+
+.laser-2 {
+  --accent: rgba(100, 200, 255, 0.45);
+  top: 18%;
+  width: 35%;
+  --duration: 10s;
+  --delay: -3s;
+  --angle: 3deg;
+}
+
+.laser-3 {
+  --accent: rgba(180, 255, 130, 0.4);
+  top: 32%;
+  width: 45%;
+  --duration: 14s;
+  --delay: -7s;
+  --angle: -6deg;
+}
+
+.laser-4 {
+  --accent: rgba(255, 200, 100, 0.5);
+  top: 45%;
+  width: 38%;
+  --duration: 11s;
+  --delay: -5s;
+  --angle: 5deg;
+}
+
+.laser-5 {
+  --accent: rgba(180, 140, 255, 0.45);
+  top: 58%;
+  width: 42%;
+  --duration: 13s;
+  --delay: -2s;
+  --angle: -3deg;
+}
+
+.laser-6 {
+  --accent: rgba(100, 255, 200, 0.5);
+  top: 70%;
+  width: 50%;
+  --duration: 9s;
+  --delay: -8s;
+  --angle: 7deg;
+}
+
+/* 方向2: 右到左 */
+.laser-7 {
+  --accent: rgba(255, 150, 100, 0.45);
+  top: 15%;
+  right: 0;
+  left: auto;
+  width: 36%;
+  --duration: 15s;
+  --delay: -1s;
+  --angle: -5deg;
+  --dir: -1;
+}
+
+.laser-8 {
+  --accent: rgba(130, 180, 255, 0.5);
+  top: 28%;
+  right: 0;
+  left: auto;
+  width: 32%;
+  --duration: 11s;
+  --delay: -6s;
+  --angle: 4deg;
+  --dir: -1;
+}
+
+.laser-9 {
+  --accent: rgba(200, 255, 150, 0.4);
+  top: 42%;
+  right: 0;
+  left: auto;
+  width: 40%;
+  --duration: 16s;
+  --delay: -4s;
+  --angle: -8deg;
+  --dir: -1;
+}
+
+.laser-10 {
+  --accent: rgba(255, 100, 150, 0.5);
+  top: 55%;
+  right: 0;
+  left: auto;
+  width: 44%;
+  --duration: 12s;
+  --delay: -9s;
+  --angle: 6deg;
+  --dir: -1;
+}
+
+.laser-11 {
+  --accent: rgba(150, 200, 255, 0.45);
+  top: 75%;
+  right: 0;
+  left: auto;
+  width: 48%;
+  --duration: 14s;
+  --delay: -3s;
+  --angle: -3deg;
+  --dir: -1;
+}
+
+.laser-12 {
+  --accent: rgba(255, 180, 220, 0.4);
+  top: 88%;
+  right: 0;
+  left: auto;
+  width: 38%;
+  --duration: 10s;
+  --delay: -7s;
+  --angle: 5deg;
+  --dir: -1;
+}
+
+@keyframes laserSlide {
+  0% {
+    opacity: 0;
+    transform: translateX(calc(var(--dir, 1) * -120%)) rotate(var(--angle));
+  }
+  8% {
+    opacity: 0.65;
+  }
+  45% {
+    opacity: 0.65;
+  }
+  55% {
+    opacity: 0;
+    transform: translateX(calc(var(--dir, 1) * 120vw)) rotate(var(--angle));
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(calc(var(--dir, 1) * 120vw)) rotate(var(--angle));
+  }
+}
+
+@keyframes laserDot {
+  0% {
+    left: 0;
+    opacity: 1;
+  }
+  45% {
+    opacity: 1;
+  }
+  55% {
+    opacity: 0;
+    left: calc(100% - 8px);
+  }
+  100% {
+    opacity: 0;
+    left: 0;
+  }
+}
+
 .hero-card {
   position: relative;
   z-index: 1;
@@ -580,6 +787,10 @@ body::before {
 }
 
 @media (max-width: 768px) {
+  .bg-lasers .laser:nth-child(n+5) {
+    display: none;
+  }
+
   body {
     padding: 8vh 1.25rem 1.25rem;
   }
