@@ -260,10 +260,70 @@ const wallpaperThemes = {
     accent: "#ab47bc",
     accentStrong: "#9c27b0",
     accentSecondary: "#f48fb1"
+  },
+  mint: {
+    orbs: [
+      { pos: "top: -100px; right: 20%;", bg: "radial-gradient(circle, rgba(100, 255, 200, 0.85) 0%, rgba(100, 255, 200, 0) 70%)" },
+      { pos: "left: -60px; bottom: -100px;", bg: "radial-gradient(circle, rgba(150, 220, 255, 0.9) 0%, rgba(150, 220, 255, 0) 72%)" }
+    ],
+    gradient: "radial-gradient(circle at top right, rgba(100, 255, 200, 0.7), transparent 28%), radial-gradient(circle at 15% 75%, rgba(150, 220, 255, 0.65), transparent 26%), linear-gradient(135deg, #f0fff8 0%, #e0f7fa 50%, #f5fffe 100%)",
+    accent: "#26c6da",
+    accentStrong: "#00acc1",
+    accentSecondary: "#4dd0e1"
+  },
+  rose: {
+    orbs: [
+      { pos: "top: -80px; left: 15%;", bg: "radial-gradient(circle, rgba(255, 130, 150, 0.9) 0%, rgba(255, 130, 150, 0) 72%)" },
+      { pos: "right: -50px; bottom: -120px;", bg: "radial-gradient(circle, rgba(255, 180, 200, 0.85) 0%, rgba(255, 180, 200, 0) 70%)" }
+    ],
+    gradient: "radial-gradient(circle at top left, rgba(255, 130, 150, 0.75), transparent 28%), radial-gradient(circle at 85% 25%, rgba(255, 180, 200, 0.65), transparent 25%), linear-gradient(135deg, #fff0f3 0%, #ffe4e8 50%, #fff5f7 100%)",
+    accent: "#e91e63",
+    accentStrong: "#e91e63",
+    accentSecondary: "#f48fb1"
+  },
+  nordic: {
+    orbs: [
+      { pos: "top: -70px; left: 5%;", bg: "radial-gradient(circle, rgba(180, 200, 220, 0.85) 0%, rgba(180, 200, 220, 0) 70%)" },
+      { pos: "right: -80px; bottom: -60px;", bg: "radial-gradient(circle, rgba(140, 160, 200, 0.9) 0%, rgba(140, 160, 200, 0) 72%)" }
+    ],
+    gradient: "radial-gradient(circle at top left, rgba(180, 200, 220, 0.7), transparent 30%), radial-gradient(circle at 80% 15%, rgba(140, 160, 200, 0.65), transparent 26%), linear-gradient(135deg, #f5f7fa 0%, #e8ecf2 50%, #f0f4f8 100%)",
+    accent: "#546e7a",
+    accentStrong: "#455a64",
+    accentSecondary: "#78909c"
+  },
+  peach: {
+    orbs: [
+      { pos: "top: -90px; right: 10%;", bg: "radial-gradient(circle, rgba(255, 180, 140, 0.95) 0%, rgba(255, 180, 140, 0) 70%)" },
+      { pos: "left: 10%; bottom: -100px;", bg: "radial-gradient(circle, rgba(255, 220, 180, 0.85) 0%, rgba(255, 220, 180, 0) 72%)" }
+    ],
+    gradient: "radial-gradient(circle at top right, rgba(255, 180, 140, 0.85), transparent 28%), radial-gradient(circle at 20% 85%, rgba(255, 220, 180, 0.7), transparent 25%), linear-gradient(135deg, #fff8f0 0%, #fef3e8 50%, #fff9f4 100%)",
+    accent: "#ffab91",
+    accentStrong: "#ff8a65",
+    accentSecondary: "#ffcc80"
+  },
+  aurora: {
+    orbs: [
+      { pos: "top: -100px; left: 10%;", bg: "radial-gradient(circle, rgba(100, 255, 180, 0.85) 0%, rgba(100, 255, 180, 0) 70%)" },
+      { pos: "right: 5%; bottom: -80px;", bg: "radial-gradient(circle, rgba(180, 100, 255, 0.9) 0%, rgba(180, 100, 255, 0) 72%)" }
+    ],
+    gradient: "radial-gradient(circle at top left, rgba(100, 255, 180, 0.7), transparent 28%), radial-gradient(circle at 85% 20%, rgba(180, 100, 255, 0.65), transparent 26%), linear-gradient(135deg, #f0fff4 0%, #f3e8ff 50%, #f8f4ff 100%)",
+    accent: "#7c4dff",
+    accentStrong: "#651fff",
+    accentSecondary: "#64ffda"
+  },
+  sakura: {
+    orbs: [
+      { pos: "top: -70px; right: 15%;", bg: "radial-gradient(circle, rgba(255, 182, 193, 0.9) 0%, rgba(255, 182, 193, 0) 72%)" },
+      { pos: "left: -50px; bottom: -100px;", bg: "radial-gradient(circle, rgba(255, 218, 233, 0.85) 0%, rgba(255, 218, 233, 0) 70%)" }
+    ],
+    gradient: "radial-gradient(circle at top right, rgba(255, 182, 193, 0.75), transparent 28%), radial-gradient(circle at 15% 85%, rgba(255, 218, 233, 0.65), transparent 25%), linear-gradient(135deg, #fff5f7 0%, #ffeef2 50%, #fff8fa 100%)",
+    accent: "#f06292",
+    accentStrong: "#ec407a",
+    accentSecondary: "#f8bbd0"
   }
 };
 
-const themeOrder = ["warm", "ocean", "forest", "sunset", "lavender"];
+const themeOrder = ["warm", "ocean", "forest", "sunset", "lavender", "mint", "rose", "nordic", "peach", "aurora", "sakura"];
 
 let userSettings = {
   theme: "warm",

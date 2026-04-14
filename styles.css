@@ -777,17 +777,17 @@ body::before {
 
 .theme-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.75rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.6rem;
 }
 
 .theme-option {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 0.5rem;
-  border-radius: 18px;
+  gap: 0.4rem;
+  padding: 0.6rem 0.4rem;
+  border-radius: 16px;
   border: 2px solid rgba(255, 255, 255, 0.55);
   background: rgba(255, 255, 255, 0.45);
   cursor: pointer;
@@ -806,8 +806,8 @@ body::before {
 
 .theme-preview {
   display: block;
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 2.2rem;
+  height: 2.2rem;
   border-radius: 50%;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
@@ -830,6 +830,30 @@ body::before {
 
 .theme-lavender {
   background: linear-gradient(135deg, #b48cff, #e6a0c8);
+}
+
+.theme-mint {
+  background: linear-gradient(135deg, #64ffc8, #96e4ff);
+}
+
+.theme-rose {
+  background: linear-gradient(135deg, #ff8296, #ffb4c4);
+}
+
+.theme-nordic {
+  background: linear-gradient(135deg, #b4c8dc, #8c9eba);
+}
+
+.theme-peach {
+  background: linear-gradient(135deg, #ffb48c, #ffdcb4);
+}
+
+.theme-aurora {
+  background: linear-gradient(135deg, #64ffda, #b48cff);
+}
+
+.theme-sakura {
+  background: linear-gradient(135deg, #ffb2c8, #ffe4ee);
 }
 
 .theme-auto {
